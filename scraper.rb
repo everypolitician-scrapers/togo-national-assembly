@@ -14,14 +14,24 @@ def noko_for(url)
   Nokogiri::HTML(open(url).read) 
 end
 
+def gender_from(name)
+  return 'female' if name.start_with? 'Mme'
+  return 'male' if name.start_with? 'M.'
+  raise "Unknown gender for #{name}"
+end
+
+
 def scrape_list(url)
   noko = noko_for(url)
   noko.css('#jsn-mainbody table tbody tr').each do |mp|
     tds = mp.css('td')
+    name = tds[0].text.gsub(/[[:space:]]+/, ' ').strip
+    next if name.empty?
     data = { 
-      name: tds[0].text.strip,
+      name: name,
       party: tds[1].text.strip,
       area: tds[2].text.strip,
+      gender: gender_from(name),
       term: 2013,
       source: url,
     }
