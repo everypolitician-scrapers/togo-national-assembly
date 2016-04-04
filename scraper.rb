@@ -32,17 +32,18 @@ def scrape_list(url)
   noko = noko_for(url)
   noko.css('#jsn-mainbody table tbody tr').each do |mp|
     tds = mp.css('td')
-    prefix, name = remove_prefixes(tds[0].text.gsub(/[[:space:]]+/, ' ').strip)
+    fullname = tds[0].text.gsub(/[[:space:]]+/, ' ').strip
+    prefix, name = remove_prefixes(fullname.dup)
     next if name.to_s.empty?
     data = { 
-      name: name,
+      name: fullname,
       honorific_prefix: prefix,
+      sort_name: name,
       party: tds[1].text.strip,
       area: tds[2].text.strip,
       gender: gender_from(prefix),
       term: 2013,
     }
-    # puts data
     ScraperWiki.save_sqlite([:name, :term], data)
   end
 end
