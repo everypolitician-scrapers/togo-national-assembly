@@ -14,10 +14,17 @@ def noko_for(url)
   Nokogiri::HTML(open(url).read) 
 end
 
-def gender_from(name)
-  return 'female' if name.start_with? 'Mme'
-  return 'male' if name.start_with? 'M.'
-  raise "Unknown gender for #{name}"
+def gender_from(prefix)
+  return 'female' if prefix == 'Mme'
+  return 'male'   if prefix == 'M'
+  raise "Unknown gender for #{prefix}"
+end
+
+def remove_prefixes(name)
+  return ['Mme', name] if name.sub! /^Mme\.?\s/, ''
+  return ['M', name] if name.sub! /^M[\. ]+/, ''
+  return
+  binding.pry
 end
 
 
@@ -25,15 +32,15 @@ def scrape_list(url)
   noko = noko_for(url)
   noko.css('#jsn-mainbody table tbody tr').each do |mp|
     tds = mp.css('td')
-    name = tds[0].text.gsub(/[[:space:]]+/, ' ').strip
-    next if name.empty?
+    prefix, name = remove_prefixes(tds[0].text.gsub(/[[:space:]]+/, ' ').strip)
+    next if name.to_s.empty?
     data = { 
       name: name,
+      honorific_prefix: prefix,
       party: tds[1].text.strip,
       area: tds[2].text.strip,
-      gender: gender_from(name),
+      gender: gender_from(prefix),
       term: 2013,
-      source: url,
     }
     # puts data
     ScraperWiki.save_sqlite([:name, :term], data)
