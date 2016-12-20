@@ -3,15 +3,14 @@
 
 require 'nokogiri'
 require 'open-uri'
-require 'csv'
-require 'scraperwiki'
 require 'pry'
+require 'scraperwiki'
 
 require 'open-uri/cached'
 OpenURI::Cache.cache_path = '.cache'
 
 def noko_for(url)
-  Nokogiri::HTML(open(url).read) 
+  Nokogiri::HTML(open(url).read)
 end
 
 def gender_from(prefix)
