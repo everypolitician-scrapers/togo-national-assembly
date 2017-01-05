@@ -1,5 +1,6 @@
 #!/bin/env ruby
 # encoding: utf-8
+# frozen_string_literal: true
 
 require 'nokogiri'
 require 'open-uri'
@@ -26,7 +27,6 @@ def remove_prefixes(name)
   binding.pry
 end
 
-
 def scrape_list(url)
   noko = noko_for(url)
   noko.css('#jsn-mainbody table tbody tr').each do |mp|
@@ -34,16 +34,16 @@ def scrape_list(url)
     fullname = tds[0].text.gsub(/[[:space:]]+/, ' ').strip
     prefix, name = remove_prefixes(fullname.dup)
     next if name.to_s.empty?
-    data = { 
-      name: fullname,
+    data = {
+      name:             fullname,
       honorific_prefix: prefix,
-      sort_name: name,
-      party: tds[1].text.strip,
-      area: tds[2].text.strip,
-      gender: gender_from(prefix),
-      term: 2013,
+      sort_name:        name,
+      party:            tds[1].text.strip,
+      area:             tds[2].text.strip,
+      gender:           gender_from(prefix),
+      term:             2013,
     }
-    ScraperWiki.save_sqlite([:name, :term], data)
+    ScraperWiki.save_sqlite(%i(name term), data)
   end
 end
 
