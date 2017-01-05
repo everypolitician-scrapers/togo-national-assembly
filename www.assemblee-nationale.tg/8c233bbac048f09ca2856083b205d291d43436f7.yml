@@ -1,0 +1,45 @@
+---
+request:
+  method: get
+  uri: http://www.assemblee-nationale.tg/index.php?Itemid=1246&id=174&option=com_content&view=article
+  body:
+    encoding: US-ASCII
+    string: ''
+  headers:
+    Accept-Encoding:
+    - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+    Accept:
+    - "*/*"
+    User-Agent:
+    - Ruby
+response:
+  status:
+    code: 200
+    message: OK
+  headers:
+    Date:
+    - Thu, 05 Jan 2017 14:58:00 GMT
+    Server:
+    - Apache/2.2.22 (Debian)
+    X-Powered-By:
+    - PHP/5.4.45-0+deb7u6
+    Set-Cookie:
+    - 14b4c994b5d99d17d054384972c8934a=m28eiee8lah28p5h3k0h1k09h3; path=/; HttpOnly
+    X-Logged-In:
+    - 'False'
+    P3p:
+    - CP="NOI ADM DEV PSAi COM NAV OUR OTRo STP IND DEM"
+    Cache-Control:
+    - no-cache
+    Pragma:
+    - no-cache
+    Transfer-Encoding:
+    - chunked
+    Content-Type:
+    - text/html; charset=utf-8
+    Content-Language:
+    - fr
+  body:
+    encoding: ASCII-8BIT
+  http_version: 
+recorded_at: Thu, 05 Jan 2017 14:58:01 GMT
