@@ -24,7 +24,6 @@ def remove_prefixes(name)
   return ['Mme', name] if name.sub! /^Mme\.?\s/, ''
   return ['M', name] if name.sub! /^M[\. ]+/, ''
   return
-  binding.pry
 end
 
 def scrape_list(url)
