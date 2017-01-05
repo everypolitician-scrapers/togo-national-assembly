@@ -7,8 +7,9 @@ require 'open-uri'
 require 'pry'
 require 'scraperwiki'
 
-require 'open-uri/cached'
-OpenURI::Cache.cache_path = '.cache'
+# require 'open-uri/cached'
+# OpenURI::Cache.cache_path = '.cache'
+require 'scraped_page_archive/open-uri'
 
 def noko_for(url)
   Nokogiri::HTML(open(url).read)
