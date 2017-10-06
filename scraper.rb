@@ -35,7 +35,7 @@ def scrape_list(url)
     prefix, name = remove_prefixes(fullname.dup)
     next if name.to_s.empty?
     data = {
-      name:             fullname,
+      name:             name,
       honorific_prefix: prefix,
       sort_name:        name,
       party:            tds[1].text.strip,
