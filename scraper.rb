@@ -43,7 +43,7 @@ def scrape_list(url)
       gender:           gender_from(prefix),
       term:             2013,
     }
-    ScraperWiki.save_sqlite(%i(name term), data)
+    ScraperWiki.save_sqlite(%i[name term], data)
   end
 end
 
