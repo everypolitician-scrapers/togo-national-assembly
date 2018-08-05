@@ -18,13 +18,13 @@ response:
     message: OK
   headers:
     Date:
-    - Sat, 04 Aug 2018 08:49:29 GMT
+    - Sun, 05 Aug 2018 07:48:42 GMT
     Server:
     - Apache/2.2.22 (Debian)
     X-Powered-By:
     - PHP/5.4.45-0+deb7u14
     Set-Cookie:
-    - 14b4c994b5d99d17d054384972c8934a=46da0o2lq7otqpehjk79lbofk1; path=/; HttpOnly
+    - 14b4c994b5d99d17d054384972c8934a=0h2v3qd37t4lfcj0nm5i3bh391; path=/; HttpOnly
     X-Logged-In:
     - 'False'
     P3p:
@@ -42,4 +42,4 @@ response:
   body:
     encoding: ASCII-8BIT
   http_version: 
-recorded_at: Sat, 04 Aug 2018 08:49:31 GMT
+recorded_at: Sun, 05 Aug 2018 07:48:43 GMT
