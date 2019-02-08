@@ -1,10 +1,8 @@
 #!/bin/env ruby
-# encoding: utf-8
 # frozen_string_literal: true
 
-require 'nokogiri'
-require 'open-uri'
 require 'pry'
+require 'scraped'
 require 'scraperwiki'
 
 require 'open-uri/cached'
@@ -16,44 +14,66 @@ class String
   end
 end
 
-def noko_for(url)
-  Nokogiri::HTML(open(url).read)
-end
-
-def gender_from(prefix)
-  return 'female' if prefix == 'Mme'
-  return 'male'   if prefix == 'M'
-  raise "Unknown gender for #{prefix}"
-end
-
-def remove_prefixes(name)
-  return ['Mme', name] if name.sub! /^Mme\.?\s/, ''
-  return ['M', name] if name.sub! /^M[\. ]+/, ''
-  return
-end
-
-def member_data(url)
-  noko = noko_for(url)
-  noko.css('#jsn-mainbody table tbody tr').map do |mp|
-    tds = mp.css('td')
-    fullname = tds[0].text.gsub(/[[:space:]]+/, ' ').strip
-    prefix, name = remove_prefixes(fullname.dup)
-    next if name.to_s.empty?
-    {
-      id:               fullname.idify,
-      name:             name,
-      honorific_prefix: prefix,
-      sort_name:        name,
-      party:            tds[1].text.strip,
-      area:             tds[2].text.strip,
-      gender:           gender_from(prefix),
-      term:             2013,
-    }
+class MembersList < Scraped::HTML
+  field :members do
+    noko.css('#jsn-mainbody table tbody tr').map { |td| fragment(td => Member).to_h }
   end
 end
 
-data = member_data('http://www.assemblee-nationale.tg/index.php?option=com_content&view=article&id=174&Itemid=1246').compact
-data.each { |mem| puts mem.reject { |_, v| v.to_s.empty? }.sort_by { |k, _| k }.to_h } if ENV['MORPH_DEBUG']
+class Member < Scraped::HTML
+  field :id do
+    fullname.idify
+  end
 
-ScraperWiki.sqliteexecute('DROP TABLE data') rescue nil
-ScraperWiki.save_sqlite(%i[name term], data)
+  field :name do
+    nameparts.last
+  end
+
+  field :honorific_prefix do
+    nameparts.first
+  end
+
+  field :sort_name do
+    name
+  end
+
+  field :party do
+    tds[1].text.strip
+  end
+
+  field :area do
+    tds[2].text.strip
+  end
+
+  field :gender do
+    return 'female' if honorific_prefix == 'Mme'
+    return 'male'   if honorific_prefix == 'M'
+
+    raise "Unknown gender for #{honorific_prefix}"
+  end
+
+  field :term do
+    2013
+  end
+
+  private
+
+  def tds
+    noko.css('td')
+  end
+
+  def fullname
+    tds[0].text.gsub(/[[:space:]]+/, ' ').strip
+  end
+
+  def nameparts
+    name = fullname.dup
+    return ['Mme', name] if name.sub! /^Mme\.?\s/, ''
+    return ['M', name] if name.sub! /^M[\. ]+/, ''
+
+    return
+  end
+end
+
+url = 'http://www.assemblee-nationale.tg/index.php?option=com_content&view=article&id=174&Itemid=1246'
+Scraped::Scraper.new(url => MembersList).store(:members)
