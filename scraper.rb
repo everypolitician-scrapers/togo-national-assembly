@@ -32,14 +32,14 @@ def remove_prefixes(name)
   return
 end
 
-def scrape_list(url)
+def member_data(url)
   noko = noko_for(url)
-  noko.css('#jsn-mainbody table tbody tr').each do |mp|
+  noko.css('#jsn-mainbody table tbody tr').map do |mp|
     tds = mp.css('td')
     fullname = tds[0].text.gsub(/[[:space:]]+/, ' ').strip
     prefix, name = remove_prefixes(fullname.dup)
     next if name.to_s.empty?
-    data = {
+    {
       id:               fullname.idify,
       name:             name,
       honorific_prefix: prefix,
@@ -49,9 +49,11 @@ def scrape_list(url)
       gender:           gender_from(prefix),
       term:             2013,
     }
-    puts data.reject { |_, v| v.to_s.empty? }.sort_by { |k, _| k }.to_h if ENV['MORPH_DEBUG']
-    ScraperWiki.save_sqlite(%i[name term], data)
   end
 end
 
-scrape_list('http://www.assemblee-nationale.tg/index.php?option=com_content&view=article&id=174&Itemid=1246')
+data = member_data('http://www.assemblee-nationale.tg/index.php?option=com_content&view=article&id=174&Itemid=1246').compact
+data.each { |mem| puts mem.reject { |_, v| v.to_s.empty? }.sort_by { |k, _| k }.to_h } if ENV['MORPH_DEBUG']
+
+ScraperWiki.sqliteexecute('DROP TABLE data') rescue nil
+ScraperWiki.save_sqlite(%i[name term], data)
