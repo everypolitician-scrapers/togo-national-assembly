@@ -10,6 +10,12 @@ require 'scraperwiki'
 require 'open-uri/cached'
 OpenURI::Cache.cache_path = '.cache'
 
+class String
+  def idify
+    downcase.gsub(/\s+/, '_')
+  end
+end
+
 def noko_for(url)
   Nokogiri::HTML(open(url).read)
 end
@@ -34,6 +40,7 @@ def scrape_list(url)
     prefix, name = remove_prefixes(fullname.dup)
     next if name.to_s.empty?
     data = {
+      id:               fullname.idify,
       name:             name,
       honorific_prefix: prefix,
       sort_name:        name,
